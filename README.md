@@ -4,10 +4,10 @@
 - Black-legged ticks
 
 ## Other Diseases Spread by Ticks (CDC)
-- Anaplasmosis
-- Babesiosis
-- Ehrlichiosis
-- Rock Mountain spotted fever
+- Anaplasmosis (https://www.cdc.gov/anaplasmosis/stats/index.html)
+- Babesiosis(2012) (https://www.cdc.gov/parasites/babesiosis/data-statistics/2012.html)
+- Ehrlichiosis (https://www.cdc.gov/ehrlichiosis/stats/index.html)
+- Rocky Mountain spotted fever (https://www.cdc.gov/rmsf/stats/index.html)
 
 ## Early Symptoms (CDC)
 - fever                         (common)
@@ -18,11 +18,13 @@
 - swollen lympth nodes          (common)
 - Erythema Migrans (EM Rash)    (present in southern tick-associated rash illness (STARI), also called Masters' disease)
 
-## STARI/Master's Disease (Wiki)
+## STARI/Master's Disease (Masters, Edwin J and Grigery, Chelsea N and Masters, Reid W)
 - Spread: Lone Star tick
 - Symptoms: EM Rash, influenza-like symptoms, fatigue, muscle pains, headache
 
 # References
+STARI/Master's Disease Paper
+
 @article{masters2008stari,
   title={STARI, or Masters disease: Lone Star tick--vectored Lyme-like illness},
   author={Masters, Edwin J and Grigery, Chelsea N and Masters, Reid W},
