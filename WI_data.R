@@ -28,15 +28,64 @@ master <- data.frame(cbind(Year,
 lyme <- ts(master$V3,
            start = c(2009, 1),
            frequency = 12)
+#Lyme window
+lyme.a<-window(lyme, start = c(2009,1), end = c(2014,12 ))
+
+#### Trends ####
+
+#Quadratic
+lyme.qt <- tslm(lyme.a~trend+I(trend*trend))
+print(summary(lyme.qt))
+
+lyme.f2<- forecast(lyme.qt, h = 24, level = 95)
+lyme.prd2<-lyme.qt$fit
+
+plot(lyme.f2)
+lines(lyme.prd2)
+lines(lyme)
+
+AIC(lyme.qt)
+
+#log-linear
+loglyme <- log(lyme)
+loglyme.a<-window(loglyme, start = c(2009,1), end = c(2014,12))
+
+lyme.log <- tslm(loglyme.a~trend)
+print(summary(lyme.log))
+
+lyme.f3 <-forecast(lyme.log, h = 24,level = 95)
+
+lyme.prd3 <- lyme.log$fit
+plot(lyme.f3)
+lines(loglyme)
+lines(lyme.prd3)
+
+
+#### Seasonality ####
 
 # linear regression
-lyme.lm <- tslm(formula = lyme ~ trend + season, 
-                data = master)
+lyme.lm <- tslm(formula = lyme.a  ~ season)
 summary(lyme.lm)
 
+# fitted values
+lyme.prd <- lyme.lm$fit
+
+# forecast
+lyme.f <- forecast(lyme.lm, h=24, level = 95)
+
 # plotting data
-plot(lyme,
-     col = "red",
-     lwd = 2)
-grid(col = "light grey",
-     lty = 2)
+plot(lyme.f,col = "blue", lwd = 2)
+lines(lyme, lwd = 2)
+lines(lyme.prd, col = "red", lwd = 2)
+
+
+# AIC and BIC scores
+
+data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
+           BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
+             c("Linear", "Quadratic", "Log"))
+#ACF and PACF
+Acf(lyme)
+Pacf(lyme)
+
+View(master)
