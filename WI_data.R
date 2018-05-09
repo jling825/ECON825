@@ -3,6 +3,8 @@ library(forecast)
 library(stats)
 library(stargazer)
 
+#### Creating Data Frame ####
+
 # Wisconsin Data
 WI09 <- c(16, 23, 26, 36, 115, 464, 647, 286, 148, 82, 60, 45)
 WI10 <- c(39, 30, 38, 72, 233, 821, 699, 239, 131, 133, 44, 32)
@@ -28,12 +30,24 @@ master <- data.frame(cbind(Year,
 lyme <- ts(master$V3,
            start = c(2009, 1),
            frequency = 12)
-#Lyme window
-lyme.a<-window(lyme, start = c(2009,1), end = c(2014,12 ))
 
 #### Trends ####
 
-#Quadratic
+# training data
+lyme.a<-window(lyme, start = c(2009,1), end = c(2014,12))
+
+# linear regression
+lyme.lm <- tslm(formula = lyme.a ~ trend)
+print(summary(lyme.lm))
+
+lyme.f1 <- forecast(lyme.lm, h = 24, level = 95)
+lyme.prd1 <- lyme.lm$fit
+
+plot(lyme.f1)
+lines(lyme.prd1)
+lines(lyme)
+
+# quadratic
 lyme.qt <- tslm(lyme.a~trend+I(trend*trend))
 print(summary(lyme.qt))
 
@@ -44,9 +58,7 @@ plot(lyme.f2)
 lines(lyme.prd2)
 lines(lyme)
 
-AIC(lyme.qt)
-
-#log-linear
+# log-linear
 loglyme <- log(lyme)
 loglyme.a<-window(loglyme, start = c(2009,1), end = c(2014,12))
 
@@ -60,6 +72,11 @@ plot(lyme.f3)
 lines(loglyme)
 lines(lyme.prd3)
 
+# AIC and BIC scores
+
+data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
+           BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
+             c("Linear", "Quadratic", "Log"))
 
 #### Seasonality ####
 
@@ -79,13 +96,6 @@ lines(lyme, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
 
-# AIC and BIC scores
-
-data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
-           BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
-             c("Linear", "Quadratic", "Log"))
-#ACF and PACF
-Acf(lyme)
-Pacf(lyme)
-
-View(master)
+# ACF and PACF
+acf(lyme)
+pacf(lyme)
