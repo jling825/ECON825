@@ -3,9 +3,7 @@ library(forecast)
 library(stats)
 library(stargazer)
 
-#### Creating Data Frame ####
-
-# Wisconsin Data
+#### Lyme disease Data ####
 WI09 <- c(16, 23, 26, 36, 115, 464, 647, 286, 148, 82, 60, 45)
 WI10 <- c(39, 30, 38, 72, 233, 821, 699, 239, 131, 133, 44, 32)
 WI11 <- c(39, 21, 38, 67, 152, 589, 832, 346, 156, 88, 63, 34)
@@ -21,15 +19,24 @@ Year <- rep(x = c(2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016),
 Month <- rep(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
              times = 8)
 
-# master set
-master <- data.frame(cbind(Year,
-                           Month,
-                           c(WI09, WI10, WI11, WI12, WI13, WI14, WI15, WI16)))
+#### Temperature Data ####
+origin <- read.csv("trend_data.csv", skip = 2, header = TRUE)
+trend <- origin[61:156,]
 
-# time series lyme data
-lyme <- ts(master$V3,
+#### Master List ####
+# master set
+master <- data.frame(cbind(trend,
+                           c(WI09, WI10, WI11, WI12, WI13, WI14, WI15, WI16)))
+names(master) = c("Date", "Trend", "Reports")
+
+# declaring time series data
+lyme <- ts(master$Reports,
            start = c(2009, 1),
            frequency = 12)
+
+trend <- ts(master$Trend,
+            start = c(2009, 1),
+            frequency = 12)
 
 #### Trends ####
 
