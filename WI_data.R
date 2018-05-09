@@ -3,6 +3,7 @@ library(forecast)
 library(stats)
 library(stargazer)
 library(vars)
+library(ggplot2)
 
 #### Lyme disease Data ####
 WI09 <- c(16, 23, 26, 36, 115, 464, 647, 286, 148, 82, 60, 45)
@@ -31,7 +32,7 @@ trend <- origin[61:156,]
 #### Master List ####
 # master set
 master <- data.frame(cbind(trend, WI, WI2))
-names(master) = c("Trend", "Reports", "W.Reports")
+names(master) = c("Date", "Trend", "Reports", "W.Reports")
 
 # declaring time series data
 lyme <- ts(master$W.Reports,
@@ -43,8 +44,7 @@ master <- ts(master[-2],
              frequency = 12)
 
 # initial plots
-plot(lyme2)
-lines(trend)
+plot(lyme)
 
 #### Trends ####
 
@@ -95,6 +95,9 @@ data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)),
 
 #### Seasonality ####
 
+# initial plots
+barplot(master$Reports)
+
 # linear regression
 lyme.lm <- tslm(formula = lyme.a  ~ season)
 summary(lyme.lm)
@@ -111,6 +114,19 @@ lines(lyme, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
 
-# ACF and PACF
-acf(lyme)
-pacf(lyme)
+#### Modeling ####
+
+# stationality
+adf.test(x = lyme)
+ndiffs(lyme)
+
+# acf and pacf
+acf(lyme, lag = 100)
+pacf(lyme, lag = 100)
+
+# fitting model
+fit <- auto.arima(lyme)
+res <- residuals(fit)
+
+lyme.f2 <- forecast(fit, h = 24, level = 95)
+plot(lyme.f2, col = "blue", lwd = "2")
