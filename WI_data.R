@@ -34,9 +34,15 @@ lyme <- ts(master$Reports,
            start = c(2009, 1),
            frequency = 12)
 
+lyme2 <- lyme / 8.32
+
 trend <- ts(master$Trend,
             start = c(2009, 1),
             frequency = 12)
+
+# initial plots
+plot(lyme2)
+lines(trend)
 
 #### Trends ####
 
