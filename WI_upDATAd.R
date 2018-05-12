@@ -1,11 +1,6 @@
 # loading libraries
-install.packages("vars")
-install.packages("gridExtra")
-install.packages("ggfortify")
-
 library(forecast)
 library(stats)
-library(stargazer)
 library(vars)
 library(ggplot2)
 library(gridExtra)
@@ -23,8 +18,6 @@ WI16 <- c(9, 14, 28, 57, 127, 433, 438, 146, 80, 91, 47, 21)
 
 WI <- c(WI09, WI10, WI11, WI12, WI13, WI14, WI15, WI16)
 
-WI2 <- WI / 8.32
-
 Year <- rep(x = c(2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016),
             each = 12)
 Month <- rep(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
@@ -33,8 +26,8 @@ Month <- rep(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
 origin <- read.csv("trend_data.csv", skip = 2, header = TRUE)
 trend <- origin[61:156,]
 
-master <- data.frame(cbind(trend, WI, WI2))
-names(master) = c("Date", "Trend", "Reports", "W.Reports")
+master <- data.frame(cbind(trend, WI))
+names(master) = c("Date", "Trend", "Reports")
 
 
 # declaring time series data
@@ -51,18 +44,17 @@ Searches.ts <- ts(master$Trend,
                 frequency = 12)
 
 # initial plots
-
 Lyme.plot <- autoplot(lyme.ts, ts.colour="blue", ts.linetype = 'dashed') +
 ggtitle("Confirmed Cases of Lyme's Disease in Wisconsin") +
   xlab("Year") +
   ylab("Reported Cases")
-Lyme.plot
-Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') +
+
+Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') + # colors not being applied
   ggtitle("Google Searches of Lyme's searches") +
   xlab("Year") +
   ylab("Searhces")
-grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 
+grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 
 #### Trends ####
 # training data
@@ -104,7 +96,7 @@ plot(lyme.f3)
 lines(loglyme)
 lines(lyme.prd3)
 
-# AIC and BIC scores
+  # AIC and BIC scores
 
 data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
            BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
@@ -114,7 +106,7 @@ data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)),
 #Season plots
 Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
 Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
-grid.arrange(Lyme.season.plot, Search.season.plot, nrow= 2)
+grid.arrange(Lyme.season.plot, Search.season.plot, nrow= 2) # Searches.ts in July isn't plotted correctly
 
 #Polar plot
 Lyme.Polar <- ggseasonplot(lyme.ts, polar=TRUE) +
@@ -138,10 +130,6 @@ Searches.subplot <- ggsubseriesplot(Searches.ts) +
 
 grid.arrange(Lyme.subplot, Searches.subplot, nrow= 2)
 
-# initial plots
-gghistogram(master$Reports)
-barplot(master$Reports)
-
 # linear regression
 lyme.lm <- tslm(formula = lyme.a  ~ season)
 summary(lyme.lm)
@@ -155,8 +143,7 @@ lyme.f <- forecast(lyme.lm, h=24, level = 95)
 # plotting data
 plot(lyme.f,col = "blue", lwd = 2)
 lines(lyme, lwd = 2)
-lines(lyme.prd, col = "red", lwd = 2)
-
+lines(lyme.prd, col = "red", lwd = 2) # ggplots this
 
 #### Modeling ####
 
@@ -173,6 +160,5 @@ fit <- auto.arima(lyme)
 res <- residuals(fit)
 
 lyme.f2 <- forecast(fit, h = 24, level = 95)
-plot(lyme.f2, col = "blue", lwd = "2")
-
+plot(lyme.f2, col = "blue", lwd = "2") # run normal AR models too
 
