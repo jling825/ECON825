@@ -17,8 +17,6 @@ WI16 <- c(9, 14, 28, 57, 127, 433, 438, 146, 80, 91, 47, 21)
 
 WI <- c(WI09, WI10, WI11, WI12, WI13, WI14, WI15, WI16)
 
-WI2 <- WI / 8.32
-
 # Year and Month
 Year <- rep(x = c(2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016),
             each = 12)
@@ -31,15 +29,15 @@ trend <- origin[61:156,]
 
 #### Master List ####
 # master set
-master <- data.frame(cbind(trend, WI, WI2))
-names(master) = c("Date", "Trend", "Reports", "W.Reports")
+master <- data.frame(cbind(trend, WI))
+names(master) = c("Date", "Trend", "Reports")
 
 # declaring time series data
-lyme <- ts(master$W.Reports,
+lyme <- ts(master$Reports,
            start = c(2009, 1),
            frequency = 12)
 
-master <- ts(master[-2],
+master <- ts(master[-1],
              start = c(2009, 1),
              frequency = 12)
 
@@ -96,7 +94,7 @@ data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)),
 #### Seasonality ####
 
 # initial plots
-barplot(master$Reports)
+barplot(height = WI)
 
 # linear regression
 lyme.lm <- tslm(formula = lyme.a  ~ season)
