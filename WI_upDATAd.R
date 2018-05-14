@@ -1,10 +1,12 @@
 # loading libraries
 library(forecast)
+library(tseries)
 library(stats)
 library(vars)
 library(ggplot2)
 library(gridExtra)
 library(ggfortify)
+library(varhandle)
 
 #### Lyme disease Data ####
 WI09 <- c(16, 23, 26, 36, 115, 464, 647, 286, 148, 82, 60, 45)
@@ -23,19 +25,20 @@ Year <- rep(x = c(2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016),
 Month <- rep(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
              times = 8)
 
-origin <- read.csv("trend_data.csv", skip = 2, header = TRUE)
-trend <- origin[61:156,]
+#### Google Trends Data ####
+origin <- read.table("trend_data.txt", sep = "\t", skip = 2, header = TRUE, stringsAsFactors = FALSE)
+trend <- unfactor(origin[61:156,])
 
+#### Master Set ####
 master <- data.frame(cbind(trend, WI))
 names(master) = c("Date", "Trend", "Reports")
-
 
 # declaring time series data
 lyme.ts <- ts(master$Reports,
            start = c(2009, 1),
            frequency = 12)
 
-master.ts <- ts(master[-2],
+master.ts <- ts(master[-1],
              start = c(2009, 1),
              frequency = 12)
 
@@ -49,7 +52,7 @@ ggtitle("Confirmed Cases of Lyme's Disease in Wisconsin") +
   xlab("Year") +
   ylab("Reported Cases")
 
-Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') + # colors not being applied
+Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') +
   ggtitle("Google Searches of Lyme's searches") +
   xlab("Year") +
   ylab("Searhces")
@@ -58,7 +61,7 @@ grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 
 #### Trends ####
 # training data
-lyme.a<-window(lyme, start = c(2009,1), end = c(2014,12))
+lyme.a<-window(lyme.ts, start = c(2009,1), end = c(2014,12))
 
 # linear regression
 lyme.lm <- tslm(formula = lyme.a ~ trend)
@@ -83,7 +86,7 @@ lines(lyme.prd2)
 lines(lyme)
 
 # log-linear
-loglyme <- log(lyme)
+loglyme <- log(lyme.ts)
 loglyme.a<-window(loglyme, start = c(2009,1), end = c(2014,12))
 
 lyme.log <- tslm(loglyme.a~trend)
@@ -96,7 +99,7 @@ plot(lyme.f3)
 lines(loglyme)
 lines(lyme.prd3)
 
-  # AIC and BIC scores
+# AIC and BIC scores
 
 data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
            BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
@@ -106,7 +109,8 @@ data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)),
 #Season plots
 Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
 Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
-grid.arrange(Lyme.season.plot, Search.season.plot, nrow= 2) # Searches.ts in July isn't plotted correctly
+
+grid.arrange(Lyme.season.plot, Search.season.plot, nrow= 2)
 
 #Polar plot
 Lyme.Polar <- ggseasonplot(lyme.ts, polar=TRUE) +
@@ -117,7 +121,6 @@ Searches.Polar <- ggseasonplot(Searches.ts, polar=TRUE) +
   ggtitle("Google Searches")
 
 grid.arrange(Lyme.Polar, Searches.Polar, nrow= 2)
-
 
 #SubSeries Plots
 Lyme.subplot <- ggsubseriesplot(lyme.ts) +
@@ -140,23 +143,52 @@ lyme.prd <- lyme.lm$fit
 # forecast
 lyme.f <- forecast(lyme.lm, h=24, level = 95)
 
-# plotting data
-plot(lyme.f,col = "blue", lwd = 2)
-lines(lyme, lwd = 2)
-lines(lyme.prd, col = "red", lwd = 2) # ggplots this
+# plotting data (change to gpg5elot)
+test <- plot(lyme.f,col = "blue", lwd = 2)
+lines(lyme.ts, lwd = 2)
+lines(lyme.prd, col = "red", lwd = 2)
+
+#### Autocorrelation ####
+ggAcf(lyme.ts, lag = 100)
+ggPacf(lyme.ts, lag = 100)
+
+#### Simple Forecasting Methods ####
+
+# plotting forecasts
+mean.method <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
+naive.method <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
+snaive.method <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE)
+drift.method <- autoplot(rwf(y = lyme.a, h = 24, drift = TRUE), series = "Drift", PI = FALSE)
+
+grid.arrange(mean.method, naive.method, snaive.method, drift.method, ncol = 2)
+
+# plotting residuals
+mean.res <- autoplot(residuals(meanf(lyme.a)))
+naive.res <- autoplot(residuals(naive(lyme.a)))
+snaive.res <- autoplot(residuals(snaive(lyme.a)))
+drift.res <- autoplot(residuals(rwf(lyme.a, drift = TRUE)))
+
+grid.arrange(mean.res, naive.res, snaive.res, drift.res, ncol = 2)
+
+# plotting acf
+mean.acf <- ggAcf(residuals(meanf(lyme.a)))
+naive.acf <- ggAcf(residuals(naive(lyme.a)))
+snaive.acf <- ggAcf(residuals(snaive(lyme.a)))
+drift.acf <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)))
+
+grid.arrange(mean.acf, naive.acf, snaive.acf, drift.acf, ncol = 2)
+
+#### Scatterplot ####
+qplot(lyme.ts, Searches.ts, xlab("Google Trends") + xlab("Reports"))
 
 #### Modeling ####
 
 # stationality
-adf.test(x = lyme)
-ndiffs(lyme)
-
-# acf and pacf
-ggAcf(lyme, lag = 100)
-ggPacf(lyme, lag = 100)
+adf.test(x = lyme.ts)
+ndiffs(lyme.ts)
 
 # fitting model
-fit <- auto.arima(lyme)
+fit <- auto.arima(lyme.ts)
 res <- residuals(fit)
 
 lyme.f2 <- forecast(fit, h = 24, level = 95)
