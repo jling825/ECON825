@@ -72,7 +72,7 @@ lyme.prd1 <- lyme.lm$fit
 
 plot(lyme.f1)
 lines(lyme.prd1)
-lines(lyme)
+lines(lyme.ts)
 
 # quadratic
 lyme.qt <- tslm(lyme.a~trend+I(trend*trend))
@@ -83,7 +83,7 @@ lyme.prd2<-lyme.qt$fit
 
 plot(lyme.f2)
 lines(lyme.prd2)
-lines(lyme)
+lines(lyme.ts)
 
 # log-linear
 loglyme <- log(lyme.ts)
