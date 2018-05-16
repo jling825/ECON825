@@ -187,10 +187,15 @@ qplot(lyme.ts, Searches.ts, xlab("Google Trends") + xlab("Reports"))
 adf.test(x = lyme.ts)
 ndiffs(lyme.ts)
 
-# fitting model
+adf.test(x = Searches.ts)
+ndiffs(Searches.ts)
+
+# auto.arima
 fit <- auto.arima(lyme.ts)
 res <- residuals(fit)
 
 lyme.f2 <- forecast(fit, h = 24, level = 95)
 plot(lyme.f2, col = "blue", lwd = "2") # run normal AR models too
 
+# VAR
+VARselect(y = master.ts, lag.max = 50) # unfinished
