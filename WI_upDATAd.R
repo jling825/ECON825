@@ -46,6 +46,10 @@ Searches.ts <- ts(master$Trend,
                 start = c(2009, 1),
                 frequency = 12)
 
+lyme.a <- window(x = lyme.ts,
+                 start = c(2009,1),
+                 end = c(2014, 12))
+
 #### Initial Observations ####
 # initial plots
 Lyme.plot <- autoplot(lyme.ts, ts.colour="blue", ts.linetype = 'dashed') +
@@ -101,38 +105,38 @@ ndiffs(Searches.ts)
 #### Univariate Modeling ####
 
 ## Simple Methods ##
-# plotting fit
-mean.method <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
-naive.method <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
-snaive.method <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE)
-drift.method <- autoplot(rwf(y = lyme.a, h = 24, drift = TRUE), series = "Drift", PI = FALSE)
+# plotting fit (add actual values)
+fit.mean <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
+fit.naive <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
+fit.snaive <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE)
+fit.drift <- autoplot(rwf(y = lyme.a, h = 24, drift = TRUE), series = "Drift", PI = FALSE)
 
-grid.arrange(mean.method, naive.method, snaive.method, drift.method, ncol = 2)
+grid.arrange(fit.mean, fit.naive, fit.snaive, fit.drift, ncol = 2)
 
-# plotting residuals
-mean.res <- autoplot(residuals(meanf(lyme.a)))
-naive.res <- autoplot(residuals(naive(lyme.a)))
-snaive.res <- autoplot(residuals(snaive(lyme.a)))
-drift.res <- autoplot(residuals(rwf(lyme.a, drift = TRUE)))
+# plotting residuals (missing values in bottom-left plot)
+res.mean <- autoplot(residuals(meanf(lyme.a)), series = "Mean")
+res.naive <- autoplot(residuals(naive(lyme.a)), series = "Naive")
+res.snaive <- autoplot(residuals(snaive(lyme.a)), series = "S-Naive")
+res.drift <- autoplot(residuals(rwf(lyme.a, drift = TRUE)), series = "Drift")
 
-grid.arrange(mean.res, naive.res, snaive.res, drift.res, ncol = 2)
+grid.arrange(res.mean, res.naive, res.snaive, res.drift, ncol = 2)
 
 # plotting acf
-mean.acf <- ggAcf(residuals(meanf(lyme.a)))
-naive.acf <- ggAcf(residuals(naive(lyme.a)))
-snaive.acf <- ggAcf(residuals(snaive(lyme.a)))
-drift.acf <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)))
+acf.mean <- ggAcf(residuals(meanf(lyme.a)), series = "Mean")
+acf.naive <- ggAcf(residuals(naive(lyme.a)), series = "Naive")
+acf.snaive <- ggAcf(residuals(snaive(lyme.a)), series = "S-Naive")
+acf.drift <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)), series = "Drift")
 
-grid.arrange(mean.acf, naive.acf, snaive.acf, drift.acf, ncol = 2)
+grid.arrange(acf.mean, acf.naive, acf.snaive, acf.drift, ncol = 2)
 
 ## Seasonal Linear Model ##
 # fitting model
-lyme.lm <- tslm(formula = lyme.a  ~ season)
-summary(lyme.lm)
+fit.lm <- tslm(formula = lyme.a  ~ season)
+summary(fit.lm)
 
 # plotting fit (ggplot this)
-lyme.prd <- lyme.lm$fit
-lyme.f <- forecast(lyme.lm, h=24, level = 95)
+lyme.prd <- fit.lm$fit
+lyme.f <- forecast(fit.lm, h=24, level = 95)
 
 test <- plot(lyme.f,col = "blue", lwd = 2)
 lines(lyme.ts, lwd = 2)
@@ -140,19 +144,19 @@ lines(lyme.prd, col = "red", lwd = 2)
 
 ## auto.arima ##
 # fitting model
-fit <- auto.arima(lyme.ts)
-res <- residuals(fit)
+fit.aa <- auto.arima(lyme.ts)
+res.aa <- residuals(fit.aa)
 
 # plotting fit (ggplot this)
-lyme.f2 <- forecast(fit, h = 24, level = 95)
+lyme.f2 <- forecast(fit.aa, h = 24, level = 95)
 plot(lyme.f2, col = "blue", lwd = 2) # run normal AR models too
 
 # plotting residuals (ggplot this)
-plot(res, col = "red", lwd = 2)
+plot(res.aa, col = "red", lwd = 2)
 
 # plotting acf
-ggAcf(res)
-ggPacf(res)
+ggAcf(res.aa)
+ggPacf(res.aa)
 
 #### Multivariate Modeling ####
 
@@ -176,4 +180,5 @@ master.ts %>% as.data.frame() %>%
   geom_smooth(method = "lm", se = FALSE)
 
 ## VAR ##
-VARselect(y = master.ts, lag.max = 50) # unfinished
+fit.var <- VARselect(y = master.ts, lag.max = 50) # unfinished
+fit.var$selection
