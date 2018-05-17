@@ -52,80 +52,40 @@
 - [x] Seasonal Naive Residuals
 - [x] Drift Residuals
 
-###### ACF/PACF
+###### ACF
 - [x] Mean ACF
 - [x] Naive ACF
 - [x] Seasonal Naive ACF
 - [x] Drift ACF
 
-- [x] Mean PACF
-- [x] Naive PACF
-- [x] Seasonal Naive PACF
-- [x] Drift PACF
-
 #### Seasonal Linear Model
-
-###### Fits
 - [x] Seasonal Fit (not ggplot)
-
-###### Residuals
-- [ ] Seasonal Residuals
-
-###### ACF/PACF
-- [ ] Seasonal ACF
-- [ ] Seasonal PACF
+- [x] Seasonal Residuals
+- [x] Seasonal ACF
 
 #### AR(1)
-
-###### Fits
 - [ ] AR(1) Fit
-
-###### Residuals
 - [ ] AR(1) Residuals
-
-###### ACF/PACF
 - [ ] AR(1) ACF
-- [ ] AR(1) PACF
 
 #### Auto ARIMA
-
-###### Fits
 - [x] Auto ARIMA Fit (not ggplot)
-
-###### Residuals
 - [x] Auto ARIMA Residuals (not ggplot)
-
-###### ACF/PACF
 - [x] Auto ARIMA ACF
-- [x] Auto ARIMA PACF
 
 ## Nonlinear Univariate Modeling
 
 #### SETAR
-
-###### Fits
 - [ ] SETAR Fit
-
-###### Residuals
 - [ ] SETAR Residuals
-
-###### ACF/PACF
 - [ ] SETAR ACF
-- [ ] SETAR PACF
 
 ## Linear Multivariate Modeling
 
 #### Simple Linear Regression
-
-###### Fits
-- [x] Simple Linear Regression Fit
-
-###### Residuals
-- [ ] Simple Linear Regression Fit
-
-###### ACF/PACF
-- [ ] Simple Linear Regression ACF
-- [ ] Simple Linear Regression PACF
+- [x] Simple Linear Regression Fit (no forecast plot yet)
+- [x] Simple Linear Regression Residuals
+- [x] Simple Linear Regression ACF
 
 #### VAR
 
