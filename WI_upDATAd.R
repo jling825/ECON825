@@ -142,6 +142,13 @@ test <- plot(lyme.f,col = "blue", lwd = 2)
 lines(lyme.ts, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
+# residuals/acf
+checkresiduals(fit.lm)
+
+## AR(1) ##
+
+
+
 ## auto.arima ##
 # fitting model
 fit.aa <- auto.arima(lyme.ts)
@@ -151,12 +158,8 @@ res.aa <- residuals(fit.aa)
 lyme.f2 <- forecast(fit.aa, h = 24, level = 95)
 plot(lyme.f2, col = "blue", lwd = 2) # run normal AR models too
 
-# plotting residuals (ggplot this)
-plot(res.aa, col = "red", lwd = 2)
-
-# plotting acf
-ggAcf(res.aa)
-ggPacf(res.aa)
+# residuals/acf
+checkresiduals(fit.aa)
 
 #### Multivariate Modeling ####
 
@@ -167,9 +170,9 @@ autoplot(master.ts[,c("Trend", "Reports")]) +
   ylab("Counts/Popularity") + xlab("Years")
 
 # linear model
-fit.lm <- tslm(formula = Reports ~ Trend,
+fit.lm2 <- tslm(formula = Reports ~ Trend,
                data = master.ts)
-summary(fit.lm)
+summary(fit.lm2)
 
 # linear model plot
 master.ts %>% as.data.frame() %>%
@@ -178,6 +181,12 @@ master.ts %>% as.data.frame() %>%
   xlab("Google Trend Popularity for Lyme Disease") +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE)
+
+# forecasting
+fit.lm2.prd <- fit.lm2$fit
+fit.lm2.f <- forecast(fit.lm2$fit, h=24, level = 95)
+
+checkresiduals(fit.lm2)
 
 ## VAR ##
 fit.var <- VARselect(y = master.ts, lag.max = 50) # unfinished
