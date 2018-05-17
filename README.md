@@ -1,37 +1,128 @@
-# ECON825 Lyme Disease Project
+# ECON825 Project Checklist
 
-## Spread (CDC)
-- Black-legged ticks
+## Data Cleaning
+- [ ] Lyme Disease Reports
+- [ ] Google Trends
+- [ ] Master Dataset
 
-## Other Diseases Spread by Ticks (CDC)
-- Anaplasmosis (https://www.cdc.gov/anaplasmosis/stats/index.html)
-- Babesiosis(2012) (https://www.cdc.gov/parasites/babesiosis/data-statistics/2012.html)
-- Ehrlichiosis (https://www.cdc.gov/ehrlichiosis/stats/index.html)
-- Rocky Mountain spotted fever (https://www.cdc.gov/rmsf/stats/index.html)
+- [ ] Lyme Disease Reports Time Series
+- [ ] Lyme Disease Reports Time Series Training Set
+- [ ] Google Trends Time Series
+- [ ] Master Dataset Time Series
 
-## Early Symptoms (CDC)
-- fever                         (common)
-- chills                        (common)
-- headache                      (common)
-- fatigue                       (common)
-- muscle/joint aches            (common)
-- swollen lympth nodes          (common)
-- Erythema Migrans (EM Rash)    (present in southern tick-associated rash illness (STARI), also called Masters' disease)
+## Initial Observations
 
-## STARI/Master's Disease (Masters, Edwin J and Grigery, Chelsea N and Masters, Reid W)
-- Spread: Lone Star tick
-- Symptoms: EM Rash, influenza-like symptoms, fatigue, muscle pains, headache
+#### Initial Plots
+- [ ] Lyme Disease Plot
+- [ ] Google Trends Plot
 
-# References
-STARI/Master's Disease Paper
+- [ ] Lyme Disease Season Plot
+- [ ] Google Trends Season Plot
 
-@article{masters2008stari,
-  title={STARI, or Masters disease: Lone Star tick--vectored Lyme-like illness},
-  author={Masters, Edwin J and Grigery, Chelsea N and Masters, Reid W},
-  journal={Infectious Disease Clinics},
-  volume={22},
-  number={2},
-  pages={361--376},
-  year={2008},
-  publisher={Elsevier}
-}
+- [ ] Lyme Disease Polar Plot
+- [ ] Google Trends Polar Plot
+
+- [ ] Lyme Disease Suberies Plots
+- [ ] Google Trends Subseries Plots
+
+#### ACF/PACF
+- [ ] Lyme Disease ACF
+- [ ] Lyme Disease PACF
+
+#### Stationality
+- [ ] Lyme Disease adf.test
+- [ ] Lyme Disease ndiffs
+
+- [ ] Google Trends adf.test
+- [ ] Google Trends ndiffs
+
+## Linear Univariate Modeling
+
+#### Simple Methods
+
+###### Fits
+- [ ] Mean Fit
+- [ ] Naive Fit
+- [ ] Seasonal Naive Fit
+- [ ] Drift Fit
+
+###### Residuals
+- [ ] Mean Residuals
+- [ ] Naive Residuals
+- [ ] Seasonal Naive Residuals
+- [ ] Drift Residuals
+
+###### ACF/PACF
+- [ ] Mean ACF
+- [ ] Naive ACF
+- [ ] Seasonal Naive ACF
+- [ ] Drift ACF
+
+- [ ] Mean PACF
+- [ ] Naive PACF
+- [ ] Seasonal Naive PACF
+- [ ] Drift PACF
+
+#### Seasonal Linear Model
+
+###### Fits
+- [ ] Seasonal Fit
+
+###### Residuals
+- [ ] Seasonal Residuals
+
+###### ACF/PACF
+- [ ] Seasonal ACF
+- [ ] Seasonal PACF
+
+#### Auto ARIMA
+
+###### Fits
+- [ ] Auto ARIMA Fit
+
+###### Residuals
+- [ ] Auto ARIMA Residuals
+
+###### ACF/PACF
+- [ ] Auto ARIMA ACF
+- [ ] Auto ARIMA PACF
+
+## Nonlinear Univariate Modeling
+
+## Linear Multivariate Modeling
+
+#### Simple Linear Regression
+
+###### Fits
+- [ ] Simple Linear Regression Fit
+
+###### Residuals
+- [ ] Simple Linear Regression Fit
+
+###### ACF/PACF
+- [ ] Simple Linear Regression ACF
+- [ ] Simple Linear Regression PACF
+
+#### VAR
+
+###### Fits
+- [ ] VAR Fit
+
+###### Residuals
+- [ ] VAR Residuals
+
+###### ACF/PACF
+- [ ] VAR ACF
+- [ ] VAR PACF
+
+## Nonlinear Multivariate Modeling
+
+## AIC Scores
+- [ ] Mean AIC
+- [ ] Naive AIC
+- [ ] Seasonal Naive AIC
+- [ ] Drift AIC
+- [ ] Seasonal AIC
+- [ ] Auto ARIMA AIC
+- [ ] Simple Linear Regression AIC
+- [ ] VAR AIC
