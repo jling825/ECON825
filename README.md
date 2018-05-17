@@ -1,72 +1,72 @@
 # ECON825 Project Checklist
 
 ## Data Cleaning
-- [ ] Lyme Disease Reports
-- [ ] Google Trends
-- [ ] Master Dataset
+- [x] Lyme Disease Reports
+- [x] Google Trends
+- [x] Master Dataset
 
-- [ ] Lyme Disease Reports Time Series
-- [ ] Lyme Disease Reports Time Series Training Set
-- [ ] Google Trends Time Series
-- [ ] Master Dataset Time Series
+- [x] Lyme Disease Reports Time Series
+- [x] Lyme Disease Reports Time Series Training Set
+- [x] Google Trends Time Series
+- [x] Master Dataset Time Series
 
 ## Initial Observations
 
 #### Initial Plots
-- [ ] Lyme Disease Plot
-- [ ] Google Trends Plot
+- [x] Lyme Disease Plot
+- [x] Google Trends Plot
 
-- [ ] Lyme Disease Season Plot
-- [ ] Google Trends Season Plot
+- [x] Lyme Disease Season Plot
+- [x] Google Trends Season Plot
 
-- [ ] Lyme Disease Polar Plot
-- [ ] Google Trends Polar Plot
+- [x] Lyme Disease Polar Plot
+- [x] Google Trends Polar Plot
 
-- [ ] Lyme Disease Suberies Plots
-- [ ] Google Trends Subseries Plots
+- [x] Lyme Disease Suberies Plots
+- [x] Google Trends Subseries Plots
 
 #### ACF/PACF
-- [ ] Lyme Disease ACF
-- [ ] Lyme Disease PACF
+- [x] Lyme Disease ACF
+- [x] Lyme Disease PACF
 
 #### Stationality
-- [ ] Lyme Disease adf.test
-- [ ] Lyme Disease ndiffs
+- [x] Lyme Disease adf.test
+- [x] Lyme Disease ndiffs
 
-- [ ] Google Trends adf.test
-- [ ] Google Trends ndiffs
+- [x] Google Trends adf.test
+- [x] Google Trends ndiffs
 
 ## Linear Univariate Modeling
 
 #### Simple Methods
 
 ###### Fits
-- [ ] Mean Fit
-- [ ] Naive Fit
-- [ ] Seasonal Naive Fit
-- [ ] Drift Fit
+- [ ] Mean Fit (missing actual values)
+- [ ] Naive Fit (missing actual values)
+- [ ] Seasonal Naive Fit (missing actual values)
+- [ ] Drift Fit (missing actual values)
 
 ###### Residuals
-- [ ] Mean Residuals
-- [ ] Naive Residuals
-- [ ] Seasonal Naive Residuals
-- [ ] Drift Residuals
+- [x] Mean Residuals
+- [x] Naive Residuals
+- [x] Seasonal Naive Residuals
+- [x] Drift Residuals
 
 ###### ACF/PACF
-- [ ] Mean ACF
-- [ ] Naive ACF
-- [ ] Seasonal Naive ACF
-- [ ] Drift ACF
+- [x] Mean ACF
+- [x] Naive ACF
+- [x] Seasonal Naive ACF
+- [x] Drift ACF
 
-- [ ] Mean PACF
-- [ ] Naive PACF
-- [ ] Seasonal Naive PACF
-- [ ] Drift PACF
+- [x] Mean PACF
+- [x] Naive PACF
+- [x] Seasonal Naive PACF
+- [x] Drift PACF
 
 #### Seasonal Linear Model
 
 ###### Fits
-- [ ] Seasonal Fit
+- [x] Seasonal Fit (not ggplot)
 
 ###### Residuals
 - [ ] Seasonal Residuals
@@ -78,23 +78,24 @@
 #### Auto ARIMA
 
 ###### Fits
-- [ ] Auto ARIMA Fit
+- [x] Auto ARIMA Fit (not ggplot)
 
 ###### Residuals
-- [ ] Auto ARIMA Residuals
+- [x] Auto ARIMA Residuals (not ggplot)
 
 ###### ACF/PACF
-- [ ] Auto ARIMA ACF
-- [ ] Auto ARIMA PACF
+- [x] Auto ARIMA ACF
+- [x] Auto ARIMA PACF
 
 ## Nonlinear Univariate Modeling
+NA
 
 ## Linear Multivariate Modeling
 
 #### Simple Linear Regression
 
 ###### Fits
-- [ ] Simple Linear Regression Fit
+- [x] Simple Linear Regression Fit
 
 ###### Residuals
 - [ ] Simple Linear Regression Fit
