@@ -75,6 +75,18 @@
 - [ ] Seasonal ACF
 - [ ] Seasonal PACF
 
+#### AR(1)
+
+###### Fits
+- [ ] AR(1) Fit
+
+###### Residuals
+- [ ] AR(1) Residuals
+
+###### ACF/PACF
+- [ ] AR(1) ACF
+- [ ] AR(1) PACF
+
 #### Auto ARIMA
 
 ###### Fits
@@ -88,7 +100,18 @@
 - [x] Auto ARIMA PACF
 
 ## Nonlinear Univariate Modeling
-NA
+
+#### SETAR
+
+###### Fits
+- [ ] SETAR Fit
+
+###### Residuals
+- [ ] SETAR Residuals
+
+###### ACF/PACF
+- [ ] SETAR ACF
+- [ ] SETAR PACF
 
 ## Linear Multivariate Modeling
 
@@ -117,6 +140,7 @@ NA
 - [ ] VAR PACF
 
 ## Nonlinear Multivariate Modeling
+NA
 
 ## AIC Scores
 - [ ] Mean AIC
