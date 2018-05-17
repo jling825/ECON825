@@ -46,10 +46,7 @@ Searches.ts <- ts(master$Trend,
                 start = c(2009, 1),
                 frequency = 12)
 
-#### Scatterplot ####
-qplot(lyme.ts, Searches.ts, xlab("Google Trends") + xlab("Reports"))
-
-#### Seasonality ####
+#### Initial Observations ####
 # initial plots
 Lyme.plot <- autoplot(lyme.ts, ts.colour="blue", ts.linetype = 'dashed') +
   ggtitle("Confirmed Cases of Lyme's Disease in Wisconsin") +
@@ -90,6 +87,10 @@ Searches.subplot <- ggsubseriesplot(Searches.ts) +
 
 grid.arrange(Lyme.subplot, Searches.subplot, nrow= 2)
 
+# Autocorrelation
+ggAcf(lyme.ts, lag = 100)
+ggPacf(lyme.ts, lag = 100)
+
 # stationality
 adf.test(x = lyme.ts)
 ndiffs(lyme.ts)
@@ -97,12 +98,10 @@ ndiffs(lyme.ts)
 adf.test(x = Searches.ts)
 ndiffs(Searches.ts)
 
-#### Autocorrelation ####
-ggAcf(lyme.ts, lag = 100)
-ggPacf(lyme.ts, lag = 100)
+#### Univariate Modeling ####
 
-#### Simple Forecasting Methods ####
-# plotting forecasts
+## Simple Methods ##
+# plotting fit
 mean.method <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
 naive.method <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
 snaive.method <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE)
@@ -126,36 +125,34 @@ drift.acf <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)))
 
 grid.arrange(mean.acf, naive.acf, snaive.acf, drift.acf, ncol = 2)
 
-##Seasonal LM ##
-# linear regression
+## Seasonal Linear Model ##
+# fitting model
 lyme.lm <- tslm(formula = lyme.a  ~ season)
 summary(lyme.lm)
 
-# fitted values
+# plotting fit (ggplot this)
 lyme.prd <- lyme.lm$fit
-
-# forecast
 lyme.f <- forecast(lyme.lm, h=24, level = 95)
 
-# plotting data (change to gpg5elot)
 test <- plot(lyme.f,col = "blue", lwd = 2)
 lines(lyme.ts, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
 ## auto.arima ##
+# fitting model
 fit <- auto.arima(lyme.ts)
 res <- residuals(fit)
 
-#### Modeling ####
+# plotting fit (ggplot this)
 lyme.f2 <- forecast(fit, h = 24, level = 95)
 plot(lyme.f2, col = "blue", lwd = 2) # run normal AR models too
 
+# plotting residuals (ggplot this)
 plot(res, col = "red", lwd = 2)
+
+# plotting acf
 ggAcf(res)
 ggPacf(res)
-
-# VAR
-VARselect(y = master.ts, lag.max = 50) # unfinished
 
 #### Multivariate Modeling ####
 
@@ -178,4 +175,5 @@ master.ts %>% as.data.frame() %>%
   geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
-
+## VAR ##
+VARselect(y = master.ts, lag.max = 50) # unfinished
