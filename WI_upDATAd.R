@@ -144,7 +144,7 @@ lyme.prd <- lyme.lm$fit
 lyme.f <- forecast(lyme.lm, h=24, level = 95)
 
 # plotting data (change to gpg5elot)
-test <- plot(lyme.f,col = "blue", lwd = 2)
+plot(lyme.f,col = "blue", lwd = 2)
 lines(lyme.ts, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
@@ -195,7 +195,34 @@ fit <- auto.arima(lyme.ts)
 res <- residuals(fit)
 
 lyme.f2 <- forecast(fit, h = 24, level = 95)
-plot(lyme.f2, col = "blue", lwd = "2") # run normal AR models too
+plot(lyme.f2, col = "blue", lwd = 2) # run normal AR models too
+
+plot(res, col = "red", lwd = 2)
+ggAcf(res)
+ggPacf(res)
 
 # VAR
 VARselect(y = master.ts, lag.max = 50) # unfinished
+
+#### Multivariate Modeling ####
+
+## Simple Linear Regression ##
+
+# data plots
+autoplot(master.ts[,c("Trend", "Reports")]) +
+  ylab("Counts/Popularity") + xlab("Years")
+
+# linear model
+fit.lm <- tslm(formula = Reports ~ Trend,
+               data = master.ts)
+summary(fit.lm)
+
+# linear model plot
+master.ts %>% as.data.frame() %>%
+  ggplot(aes(x = Trend, y = Reports)) + 
+  ylab("Total Reports of Lyme Disease") + 
+  xlab("Google Trend Popularity for Lyme Disease") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+# 
