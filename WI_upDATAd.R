@@ -46,9 +46,13 @@ Searches.ts <- ts(master$Trend,
                 start = c(2009, 1),
                 frequency = 12)
 
+#### Scatterplot ####
+qplot(lyme.ts, Searches.ts, xlab("Google Trends") + xlab("Reports"))
+
+#### Seasonality ####
 # initial plots
 Lyme.plot <- autoplot(lyme.ts, ts.colour="blue", ts.linetype = 'dashed') +
-ggtitle("Confirmed Cases of Lyme's Disease in Wisconsin") +
+  ggtitle("Confirmed Cases of Lyme's Disease in Wisconsin") +
   xlab("Year") +
   ylab("Reported Cases")
 
@@ -59,53 +63,6 @@ Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') +
 
 grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 
-#### Trends ####
-# training data
-lyme.a<-window(lyme.ts, start = c(2009,1), end = c(2014,12))
-
-# linear regression
-lyme.lm <- tslm(formula = lyme.a ~ trend)
-print(summary(lyme.lm))
-
-lyme.f1 <- forecast(lyme.lm, h = 24, level = 95)
-lyme.prd1 <- lyme.lm$fit
-
-plot(lyme.f1)
-lines(lyme.prd1)
-lines(lyme.ts)
-
-# quadratic
-lyme.qt <- tslm(lyme.a~trend+I(trend*trend))
-print(summary(lyme.qt))
-
-lyme.f2<- forecast(lyme.qt, h = 24, level = 95)
-lyme.prd2<-lyme.qt$fit
-
-plot(lyme.f2)
-lines(lyme.prd2)
-lines(lyme.ts)
-
-# log-linear
-loglyme <- log(lyme.ts)
-loglyme.a<-window(loglyme, start = c(2009,1), end = c(2014,12))
-
-lyme.log <- tslm(loglyme.a~trend)
-print(summary(lyme.log))
-
-lyme.f3 <-forecast(lyme.log, h = 24,level = 95)
-
-lyme.prd3 <- lyme.log$fit
-plot(lyme.f3)
-lines(loglyme)
-lines(lyme.prd3)
-
-# AIC and BIC scores
-
-data.frame(AIC = c(AIC(lyme.lm),AIC(lyme.qt), AIC(lyme.log)), 
-           BIC = c(BIC(lyme.lm), BIC(lyme.qt), BIC(lyme.log)), row.names = 
-             c("Linear", "Quadratic", "Log"))
-
-#### Seasonality ####
 #Season plots
 Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
 Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
@@ -133,27 +90,18 @@ Searches.subplot <- ggsubseriesplot(Searches.ts) +
 
 grid.arrange(Lyme.subplot, Searches.subplot, nrow= 2)
 
-# linear regression
-lyme.lm <- tslm(formula = lyme.a  ~ season)
-summary(lyme.lm)
+# stationality
+adf.test(x = lyme.ts)
+ndiffs(lyme.ts)
 
-# fitted values
-lyme.prd <- lyme.lm$fit
-
-# forecast
-lyme.f <- forecast(lyme.lm, h=24, level = 95)
-
-# plotting data (change to gpg5elot)
-test <- plot(lyme.f,col = "blue", lwd = 2)
-lines(lyme.ts, lwd = 2)
-lines(lyme.prd, col = "red", lwd = 2)
+adf.test(x = Searches.ts)
+ndiffs(Searches.ts)
 
 #### Autocorrelation ####
 ggAcf(lyme.ts, lag = 100)
 ggPacf(lyme.ts, lag = 100)
 
 #### Simple Forecasting Methods ####
-
 # plotting forecasts
 mean.method <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
 naive.method <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
@@ -178,24 +126,30 @@ drift.acf <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)))
 
 grid.arrange(mean.acf, naive.acf, snaive.acf, drift.acf, ncol = 2)
 
-#### Scatterplot ####
-qplot(lyme.ts, Searches.ts, xlab("Google Trends") + xlab("Reports"))
+##Seasonal LM ##
+# linear regression
+lyme.lm <- tslm(formula = lyme.a  ~ season)
+summary(lyme.lm)
 
-#### Modeling ####
+# fitted values
+lyme.prd <- lyme.lm$fit
 
-# stationality
-adf.test(x = lyme.ts)
-ndiffs(lyme.ts)
+# forecast
+lyme.f <- forecast(lyme.lm, h=24, level = 95)
 
-adf.test(x = Searches.ts)
-ndiffs(Searches.ts)
+# plotting data (change to gpg5elot)
+test <- plot(lyme.f,col = "blue", lwd = 2)
+lines(lyme.ts, lwd = 2)
+lines(lyme.prd, col = "red", lwd = 2)
 
-# auto.arima
+## auto.arima ##
 fit <- auto.arima(lyme.ts)
 res <- residuals(fit)
 
+#### Modeling ####
 lyme.f2 <- forecast(fit, h = 24, level = 95)
 plot(lyme.f2, col = "blue", lwd = "2") # run normal AR models too
 
 # VAR
 VARselect(y = master.ts, lag.max = 50) # unfinished
+
