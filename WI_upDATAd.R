@@ -1,12 +1,12 @@
 # loading libraries
-library(forecast)
-library(tseries)
-library(stats)
-library(vars)
-library(ggplot2)
-library(gridExtra)
-library(ggfortify)
-library(varhandle)
+library(forecast) # allows forecasting
+library(tseries) # adf.tests and ARIMA models
+library(stats) # AIC
+library(vars) # VAR and Varselect
+library(ggplot2) # better plots
+library(gridExtra) # more ggplot options
+library(ggfortify) # more gpglot options
+library(varhandle) # unfactorizes data
 
 #### Lyme disease Data ####
 WI09 <- c(16, 23, 26, 36, 115, 464, 647, 286, 148, 82, 60, 45)
@@ -65,31 +65,24 @@ Searches.plot <- autoplot(Searches.ts,ts.colour="red", ts.linetype = 'dashed') +
 grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 
 #Season plots
-Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
-Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)+ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
+Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE) +
+  ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
+Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)
++ ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
 
-grid.arrange(Lyme.season.plot, Search.season.plot, nrow= 2)
+grid.arrange(Lyme.season.plot, Search.season.plot, nrow = 2)
 
 #Polar plot
-Lyme.Polar <- ggseasonplot(lyme.ts, polar=TRUE) +
-  ylab("Confirmed Cases") +
-  ggtitle("Confirmed Cases in Wisconsin")
-Searches.Polar <- ggseasonplot(Searches.ts, polar=TRUE) +
-  ylab("Searhces") +
-  ggtitle("Google Searches")
+Lyme.Polar <- ggseasonplot(lyme.ts, polar=TRUE) + ylab("Confirmed Cases") + ggtitle("Confirmed Cases in Wisconsin")
+Searches.Polar <- ggseasonplot(Searches.ts, polar=TRUE) + ylab("Searhces") + ggtitle("Google Searches")
 
-grid.arrange(Lyme.Polar, Searches.Polar, nrow= 2)
+grid.arrange(Lyme.Polar, Searches.Polar, nrow = 2)
 
 #SubSeries Plots
-Lyme.subplot <- ggsubseriesplot(lyme.ts) +
-  ylab("Confirmed Cases") +
-  ggtitle("Confirmed Cases in Wisconsin")
+Lyme.subplot <- ggsubseriesplot(lyme.ts) + ylab("Confirmed Cases") + ggtitle("Confirmed Cases in Wisconsin")
+Searches.subplot <- ggsubseriesplot(Searches.ts) + ylab("Google searches") + ggtitle("Google Searches")
 
-Searches.subplot <- ggsubseriesplot(Searches.ts) + 
-  ylab("Google searches") +
-  ggtitle("Google Searches")
-
-grid.arrange(Lyme.subplot, Searches.subplot, nrow= 2)
+grid.arrange(Lyme.subplot, Searches.subplot, nrow = 2)
 
 # Autocorrelation
 ggAcf(lyme.ts, lag = 100)
