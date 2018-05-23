@@ -137,6 +137,7 @@ plot(lyme.f,col = "blue", lwd = 2,
      main = "Seasonal Linear Model")
 lines(lyme.ts, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
+legend("bottomleft", c("Observed", "Predicted", "Fitted"), col = c("black", "blue", "red"), lwd = 2)
 
 # residuals/acf
 checkresiduals(fit.lm)
@@ -151,9 +152,10 @@ ar1.f <- forecast(fit.ar1, h = 24, lwd = 2)
 
 plot(ar1.f, col = "blue", lwd = 2,
      ylab = "Confirmed Cases", xlab = "Year",
-     main = "Seasonal Linear Model")
+     main = "AR(1) Model")
 lines(lyme.ts, lwd = 2)
 lines(ar1.prd, col = "red", lwd = 2)
+legend("bottomleft", c("Observed", "Predicted", "Fitted"), col = c("black", "blue", "red"), lwd = 2)
 
 # residuals/acf
 checkresiduals(fit.ar1)
@@ -168,9 +170,10 @@ ar2.f <- forecast(fit.ar2, h = 24, lwd = 2)
 
 plot(ar2.f, col = "blue", lwd = 2,
      ylab = "Confirmed Cases", xlab = "Year",
-     main = "Seasonal Linear Model")
+     main = "AR(2) Model")
 lines(lyme.ts, lwd = 2)
 lines(ar2.prd, col = "red", lwd = 2)
+legend("bottomleft", c("Observed", "Predicted", "Fitted"), col = c("black", "blue", "red"), lwd = 2)
 
 # residuals/acf
 checkresiduals(fit.ar2)
@@ -186,12 +189,27 @@ aa.f <- forecast(fit.aa, h = 24, level = 95)
 
 plot(aa.f, col = "blue", lwd = 2,
      ylab = "Confirmed Cases", xlab = "Year",
-     main = "Seasonal Linear Model")
+     main = "Auto ARIMA Model")
 lines(lyme.ts, lwd = 2)
 lines(aa.prd, col = "red", lwd = 2)
+legend("bottomleft", c("Observed", "Predicted", "Fitted"), col = c("black", "blue", "red"), lwd = 2)
 
 # residuals/acf
 checkresiduals(fit.aa)
+
+# forecasting
+fit.aa2 <- auto.arima(y = lyme.ts, stationary = TRUE)
+summary(fit.aa)
+
+aa.prd2 <- fit.aa2$fit
+aa.f2 <- forecast(fit.aa2, h = 24, level = 95)
+
+plot(aa.f2, col = "blue", lwd = 2,
+     ylab = "Confirmed Cases", xlab = "Year",
+     main = "Auto ARIMA Forecast")
+lines(lyme.ts, lwd = 2)
+lines(aa.prd2, col = "red", lwd = 2)
+legend("bottomleft", c("Observed", "Predicted", "Fitted"), col = c("black", "blue", "red"), lwd = 2)
 
 #### Multivariate Modeling ####
 
@@ -242,6 +260,9 @@ summary(var1)
 plot(resid(var1))
 
 plot(irf(var1, n.ahead = 24))
+
+# plotting FEVD
+plot(fevd(var1))
 
 #### AIC ####
 AIC(fit.lm)
