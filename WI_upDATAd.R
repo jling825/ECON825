@@ -33,6 +33,12 @@ trend <- unfactor(origin[61:156,])
 master <- data.frame(cbind(trend, WI))
 names(master) = c("Date", "Trend", "Reports")
 
+# log Reports
+master$Reports = log(master$Reports)
+
+# log Google Trends
+master$Trend = log(master$Trend)
+
 # declaring time series data
 lyme.ts <- ts(master$Reports,
            start = c(2009, 1),
@@ -47,8 +53,10 @@ Searches.ts <- ts(master$Trend,
                 frequency = 12)
 
 lyme.a <- window(x = lyme.ts,
-                 start = c(2009,1),
                  end = c(2014, 12))
+
+master.a <- window(x = master.ts,
+                   end = c(2014, 12))
 
 #### Initial Observations ####
 # initial plots
@@ -67,8 +75,8 @@ grid.arrange(Lyme.plot, Searches.plot, nrow=2)
 #Season plots
 Lyme.season.plot <- ggseasonplot(lyme.ts, year.labels = TRUE, year.labels.left = TRUE) +
   ylab("Confirmed Cases") + ggtitle("Seasonailty for confirmed Lyme's disease cases in Wisconcin")
-Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE)
-+ ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
+Search.season.plot <-ggseasonplot(Searches.ts, year.labels = TRUE, year.labels.left = TRUE) +
+  ylab("Google Searches") + ggtitle("Seasonailty for google searches for 'Lyme's Disease'")
 
 grid.arrange(Lyme.season.plot, Search.season.plot, nrow = 2)
 
@@ -98,40 +106,35 @@ ndiffs(Searches.ts)
 #### Univariate Modeling ####
 
 ## Simple Methods ##
-# plotting fit (add actual values)
-fit.mean <- autoplot(meanf(y = lyme.a, h = 24), series = "Mean", PI = FALSE)
-fit.naive <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE)
-fit.snaive <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE)
-fit.drift <- autoplot(rwf(y = lyme.a, h = 24, drift = TRUE), series = "Drift", PI = FALSE)
+# plotting fit
+fit.mean <- autoplot(meanf(y = lyme.a, h = 24), seires = "Mean", PI = FALSE) +
+  ylab("Confirmed Cases") + ggtitle("Mean Fit Model")
+fit.naive <- autoplot(naive(y = lyme.a, h = 24), series = "Naive", PI = FALSE) +
+  ylab("Confirmed Cases") + ggtitle("Naive Fit Model")
+fit.snaive <- autoplot(snaive(y = lyme.a, h = 24), series = "S-Naive", PI = FALSE) +
+  ylab("Confirmed Cases") + ggtitle("Seasonal-Naive Fit Model")
+fit.drift <- autoplot(rwf(y = lyme.a, h = 24, drift = TRUE), series = "Drift", PI = FALSE) +
+  ylab("Confirmed Cases") + ggtitle("Random Walk Fit Model")
 
 grid.arrange(fit.mean, fit.naive, fit.snaive, fit.drift, ncol = 2)
 
-# plotting residuals (missing values in bottom-left plot)
-res.mean <- autoplot(residuals(meanf(lyme.a)), series = "Mean")
-res.naive <- autoplot(residuals(naive(lyme.a)), series = "Naive")
-res.snaive <- autoplot(residuals(snaive(lyme.a)), series = "S-Naive")
-res.drift <- autoplot(residuals(rwf(lyme.a, drift = TRUE)), series = "Drift")
-
-grid.arrange(res.mean, res.naive, res.snaive, res.drift, ncol = 2)
-
-# plotting acf
-acf.mean <- ggAcf(residuals(meanf(lyme.a)), series = "Mean")
-acf.naive <- ggAcf(residuals(naive(lyme.a)), series = "Naive")
-acf.snaive <- ggAcf(residuals(snaive(lyme.a)), series = "S-Naive")
-acf.drift <- ggAcf(residuals(rwf(lyme.a, drift = TRUE)), series = "Drift")
-
-grid.arrange(acf.mean, acf.naive, acf.snaive, acf.drift, ncol = 2)
+checkresiduals(meanf(y = lyme.a, h = 24))
+checkresiduals(naive(y = lyme.a, h = 24))
+checkresiduals(snaive(y = lyme.a, h = 24))
+checkresiduals(rwf(y = lyme.a, h = 24, drift = TRUE))
 
 ## Seasonal Linear Model ##
 # fitting model
 fit.lm <- tslm(formula = lyme.a  ~ season)
 summary(fit.lm)
 
-# plotting fit (ggplot this)
+# plotting fit
 lyme.prd <- fit.lm$fit
 lyme.f <- forecast(fit.lm, h=24, level = 95)
 
-test <- plot(lyme.f,col = "blue", lwd = 2)
+plot(lyme.f,col = "blue", lwd = 2,
+     ylab = "Confirmed Cases", xlab = "Year",
+     main = "Seasonal Linear Model")
 lines(lyme.ts, lwd = 2)
 lines(lyme.prd, col = "red", lwd = 2)
 
@@ -139,17 +142,53 @@ lines(lyme.prd, col = "red", lwd = 2)
 checkresiduals(fit.lm)
 
 ## AR(1) ##
+fit.ar1 <- arima(lyme.a, order = c(1,0,0))
+summary(fit.ar1)
 
+# plotting fit
+ar1.prd <- fitted(fit.ar1)
+ar1.f <- forecast(fit.ar1, h = 24, lwd = 2)
 
+plot(ar1.f, col = "blue", lwd = 2,
+     ylab = "Confirmed Cases", xlab = "Year",
+     main = "Seasonal Linear Model")
+lines(lyme.ts, lwd = 2)
+lines(ar1.prd, col = "red", lwd = 2)
+
+# residuals/acf
+checkresiduals(fit.ar1)
+
+## AR(2) ##
+fit.ar2 <- arima(lyme.a, order = c(2,0,0))
+summary(fit.ar2)
+
+# plotting fit
+ar2.prd <- fitted(fit.ar2)
+ar2.f <- forecast(fit.ar2, h = 24, lwd = 2)
+
+plot(ar2.f, col = "blue", lwd = 2,
+     ylab = "Confirmed Cases", xlab = "Year",
+     main = "Seasonal Linear Model")
+lines(lyme.ts, lwd = 2)
+lines(ar2.prd, col = "red", lwd = 2)
+
+# residuals/acf
+checkresiduals(fit.ar2)
 
 ## auto.arima ##
 # fitting model
-fit.aa <- auto.arima(lyme.ts)
-res.aa <- residuals(fit.aa)
+fit.aa <- auto.arima(y = lyme.a, stationary = TRUE)
+summary(fit.aa)
 
-# plotting fit (ggplot this)
-lyme.f2 <- forecast(fit.aa, h = 24, level = 95)
-plot(lyme.f2, col = "blue", lwd = 2) # run normal AR models too
+# plotting fit
+aa.prd <- fit.aa$fit
+aa.f <- forecast(fit.aa, h = 24, level = 95)
+
+plot(aa.f, col = "blue", lwd = 2,
+     ylab = "Confirmed Cases", xlab = "Year",
+     main = "Seasonal Linear Model")
+lines(lyme.ts, lwd = 2)
+lines(aa.prd, col = "red", lwd = 2)
 
 # residuals/acf
 checkresiduals(fit.aa)
@@ -179,8 +218,33 @@ master.ts %>% as.data.frame() %>%
 fit.lm2.prd <- fit.lm2$fit
 fit.lm2.f <- forecast(fit.lm2$fit, h=24, level = 95)
 
+# residuals/acf
 checkresiduals(fit.lm2)
 
 ## VAR ##
-fit.var <- VARselect(y = master.ts, lag.max = 50) # unfinished
-fit.var$selection
+# finding optimal lags
+VARselect(y = master.a, lag.max = 10, type = "const")[["selection"]]
+
+var1 <- VAR(y = master.a, p = 3)
+serial.test(x = var1, lags.pt = 10, type = "PT.asymptotic")
+
+var2 <- VAR(y = master.a, p = 6)
+serial.test(x = var2, lags.pt = 10, type = "PT.asymptotic")
+
+var3 <- VAR(y = master.a, p = 8)
+serial.test(x = var3, lags.pt = 10, type = "PT.asymptotic")
+
+# plotting forecast
+autoplot(forecast(var1, h = 24)) + xlab("Year")
+summary(var1)
+
+# plotting fit
+plot(resid(var1))
+
+plot(irf(var1, n.ahead = 24))
+
+#### AIC ####
+AIC(fit.lm)
+AIC(fit.ar1)
+AIC(fit.ar2)
+AIC(fit.aa)
