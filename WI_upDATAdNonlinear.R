@@ -195,12 +195,6 @@ fit.var$selection
 plot(lyme.ts)
 
 lyme.log <- log10(lyme.ts)
-plot(lyme.log)
-hist(lyme.log)
-par(mfrow=c(2,1), mar = c(2,4,0,0))
-acf(lyme.log)
-pacf(lyme.log)
-ndiffs(lyme.log)
 
 #AR 
 lyme.ar <- linear(lyme.log,m=2)
@@ -209,72 +203,31 @@ plot(lyme.ar)
 checkresiduals(lyme.ar)
 AIC(lyme.ar)
 
-#Setar where mL =1
-lyme.setar <- setar(lyme.log, m =2, mL = 2, mH = 2, thDelay = 1)
+
+########################
+mods<-list()
+grid <- selectSETAR(lyme.log, m  = 4, thDelay = 0, criterion = "AIC")
+print(grid)
+
+#Setar where mL =4 and mH = 2
+lyme.setar <- setar(lyme.log, mL = 4, mH = 2, th =2.123852, thDelay = 0)
 lyme.setar
-plot(lyme.setar)
 checkresiduals(lyme.setar)
 AIC(lyme.setar)
 
-#Setar where mL = 2
-lyme.setar2 <- setar(lyme.log, m =2, mL = 1, mH=2, thDelay = 1)
-lyme.setar2
-plot(lyme.setar2)
-checkresiduals(lyme.setar2)
-AIC(lyme.setar2)
 
-lyme.setar3 <- setar(lyme.log, m =2, thDelay = 1, th = 1.20)
+#Setar where m =2
+lyme.setar3 <- setar(lyme.log, m =2, thDelay = 1, th = 1.30)
 lyme.setar3
 plot(lyme.setar3)
 checkresiduals(lyme.setar3)
 AIC(lyme.setar3)
 
 
-mod<-list()
-mod[["linear"]] <- linear(lyme.log, m =3)
-mod[["setar"]] <- setar(lyme.log, m =3, thDelay = 1)
-mod[["lstar"]] <- lstar(lyme.log, m =3, thDelay = 1)
-mod[["nneTs"]] <- nnetTs(lyme.log, m=3, size= 3)
-mod[["aar"]] <- aar(lyme.log, m =3)
-
-sapply(mod, AIC)
-sapply(mod,MAPE)
-
-set.seed(10)
-mod.test <- list()
-lyme.log.train <- window(lyme.log, end = 2014)
-lyme.log.test <- window(lyme.log, start = 2016)
-
-mod.test[["linear"]] <- linear(lyme.log.train, m =3)
-mod.test[["setar"]] <- setar(lyme.log.train, m =3, thDelay = 1)
-mod.test[["lstar"]] <- lstar(lyme.log.train, m =3, thDelay = 1, trace = FALSE,
-                             control = list(maxit=1e5) )
-mod.test[["nneTs"]] <- nnetTs(lyme.log.train, m=3, size= 3, control = list(maxit=1e5))
-mod.test[["aar"]] <- aar(lyme.log.train, m =3)
-
-frc.test<-lapply(mod.test, predict, n.ahead=10)
-
-plot(lyme.log.test, ylim = range(lyme.log))
-for(i in 1:length(frc.test)) lines(frc.test[[i]], lty = i+1, col = i +1)
-legend(2015, 2,5, lty = 1:(length(frc.test)+1) col =1:length(frc.test)+1),
-legend = c("observed", names(frc.test)))
 
 
-mods<-list()
-grid <- selectSETAR(lyme.log, m  = 22, thDelay = 1, criterion = "AIC")
-print(grid)
 
 
-lyme.setar4 <- setar(lyme.log, mL =22, mH =15, thDelay = 1, th = 1.579784)
-lyme.setar4
-plot(lyme.setar4)
-checkresiduals(lyme.setar4)
-AIC(lyme.setar4)
-
-recurr(lyme.log, m = 3, d =1, levels = c(0,0.2,1))
-lag.plot(lyme.log, lags = 3, layout=c(1,3))
-
-autopairs(lyme.log, lag =1, type = "regression")
 
 
 
